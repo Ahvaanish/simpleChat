@@ -93,6 +93,9 @@ public class ChatClient extends AbstractClient
   {
     try
     {
+      if(message.startsWith("#")){
+        handleCommand(message);
+      }
       sendToServer(message);
     }
     catch(IOException e)
@@ -102,7 +105,67 @@ public class ChatClient extends AbstractClient
       quit();
     }
   }
-  
+
+  /**
+   * Executes a command based on the command string inputed
+   * @param command to be executed
+   */
+  private void handleCommand(String command){
+    if(command.equals("#quit")){
+      quit();
+    }
+    else if (command.equals("#logoff")){
+      try {
+        closeConnection();
+      }
+      catch(IOException e){
+        clientUI.display("Issues occurred when closing connection");
+      }
+    }
+    else if (command.startsWith("#sethost")){
+
+      if(!isConnected()){
+        String[] host = command.split(" ",2);
+        setHost(host[1]);
+      }
+      else {
+        clientUI.display("Command failed because user is logged in");
+      }
+    }
+    else if (command.startsWith("#setport")){
+
+      if (!isConnected()){
+        String[] port = command.split(" ",2);
+        setPort(Integer.parseInt(port[1]));
+      }
+      else {
+        clientUI.display("Command failed because user is logged in");
+      }
+    }
+    else if (command.equals("#login")){
+      if(!isConnected()){
+        try{
+          openConnection();
+        }
+        catch (IOException e){
+          clientUI.display("Connection failed");
+        }
+      }
+      else {
+        clientUI.display("Command failed because user is logged in");
+      }
+    }
+    else if (command.equals("#gethost")){
+      clientUI.display(getHost());
+    }
+    else if (command.equals("#getport")){
+      clientUI.display(Integer.toString(getPort()));
+    }
+    else {
+      clientUI.display("Not a valid command");
+    }
+  }
+
   /**
    * This method terminates the client.
    */
