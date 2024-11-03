@@ -23,7 +23,7 @@ public class ClientConsole implements ChatIF
   //Class variables *************************************************
   
   /**
-   * The default port to connect on.
+   * The default port to connect on, when no port is provided in terminal
    */
   final public static int DEFAULT_PORT = 5555;
   
@@ -33,9 +33,8 @@ public class ClientConsole implements ChatIF
    * The instance of the client that created this ConsoleChat.
    */
   ChatClient client;
-  
-  
-  
+
+
   /**
    * Scanner to read from the console
    */
@@ -114,21 +113,28 @@ public class ClientConsole implements ChatIF
    * This method is responsible for the creation of the Client UI.
    *
    * @param args[0] The host to connect to.
+   * @param args[1] The port to connect to.
    */
   public static void main(String[] args) 
   {
     String host = "";
 
+    int port;
 
     try
     {
       host = args[0];
+      port = Integer.parseInt(args[1]);
     }
     catch(ArrayIndexOutOfBoundsException e)
     {
       host = "localhost";
+      port = DEFAULT_PORT;
     }
-    ClientConsole chat= new ClientConsole(host, DEFAULT_PORT);
+    catch (NumberFormatException ne){
+      port = DEFAULT_PORT;
+    }
+    ClientConsole chat = new ClientConsole(host, port);
     chat.accept();  //Wait for console data
   }
 }
