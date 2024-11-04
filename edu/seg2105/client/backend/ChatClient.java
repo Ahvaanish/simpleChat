@@ -58,8 +58,6 @@ public class ChatClient extends AbstractClient
   public void handleMessageFromServer(Object msg) 
   {
     clientUI.display(msg.toString());
-    
-    
   }
 
   /**
@@ -96,7 +94,9 @@ public class ChatClient extends AbstractClient
       if(message.startsWith("#")){
         handleCommand(message);
       }
-      sendToServer(message);
+      else {
+        sendToServer(message);
+      }
     }
     catch(IOException e)
     {

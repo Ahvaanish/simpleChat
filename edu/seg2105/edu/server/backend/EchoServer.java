@@ -4,6 +4,8 @@ package edu.seg2105.edu.server.backend;
 // license found at www.lloseng.com 
 
 
+import edu.seg2105.client.common.ChatIF;
+import edu.seg2105.edu.server.ui.ServerConsole;
 import ocsf.server.*;
 
 import java.io.IOException;
@@ -19,13 +21,13 @@ import java.io.IOException;
  */
 public class EchoServer extends AbstractServer 
 {
-  //Class variables *************************************************
-  
+
   /**
-   * The default port to listen on.
+   * The interface type variable.  It allows the implementation of
+   * the display method in the client.
    */
-  final public static int DEFAULT_PORT = 5555;
-  
+  ChatIF serverUI;
+
   //Constructors ****************************************************
   
   /**
@@ -33,11 +35,11 @@ public class EchoServer extends AbstractServer
    *
    * @param port The port number to connect on.
    */
-  public EchoServer(int port) 
+  public EchoServer(int port, ServerConsole serverConsole)
   {
     super(port);
+    serverUI = serverConsole;
   }
-
   
   //Instance methods ************************************************
   
@@ -50,9 +52,35 @@ public class EchoServer extends AbstractServer
   public void handleMessageFromClient
     (Object msg, ConnectionToClient client)
   {
-    System.out.println("Message received: " + msg + " from " + client);
+    System.out.println("Message received: " + msg + " from " + client); //Change this?
     this.sendToAllClients(msg);
   }
+
+
+  // Not sure if this is the way to implement this
+
+  /**
+   * Sends message to all clients
+   * @param message to be delt with
+   */
+  public void handleMessageFromServerUI(String message){
+
+      if(message.startsWith("#")){
+        handleCommand(message);
+      }
+      else {
+        System.out.println("Message sent: "+message);
+        sendToAllClients("SERVER MSG> "+message);
+      }
+  }
+
+
+/**
+ * Executes a command based on the command string inputed
+ * @param command to be executed
+ */
+private void handleCommand(String command){
+}
     
   /**
    * This method overrides the one in the superclass.  Called
@@ -105,37 +133,6 @@ public class EchoServer extends AbstractServer
   }
 
   //Class methods ***************************************************
-  
-  /**
-   * This method is responsible for the creation of 
-   * the server instance (there is no UI in this phase).
-   *
-   * @param args[0] The port number to listen on.  Defaults to 5555 
-   *          if no argument is entered.
-   */
-  public static void main(String[] args) 
-  {
-    int port = 0; //Port to listen on
 
-    try
-    {
-      port = Integer.parseInt(args[0]); //Get port from command line
-    }
-    catch(Throwable t)
-    {
-      port = DEFAULT_PORT; //Set port to 5555
-    }
-	
-    EchoServer sv = new EchoServer(port);
-    
-    try 
-    {
-      sv.listen(); //Start listening for connections
-    } 
-    catch (Exception ex) 
-    {
-      System.out.println("ERROR - Could not listen for clients!");
-    }
-  }
 }
 //End of EchoServer class
