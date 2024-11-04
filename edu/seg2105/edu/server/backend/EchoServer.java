@@ -29,7 +29,6 @@ public class EchoServer extends AbstractServer
    */
   ChatIF serverUI;
 
-
   /**
    * Boolean variable indicating whether the server has started
    */
@@ -64,8 +63,38 @@ public class EchoServer extends AbstractServer
   public void handleMessageFromClient
     (Object msg, ConnectionToClient client)
   {
-    System.out.println("Message received: " + msg + " from " + client); //Change this?
-    this.sendToAllClients(msg);
+    String message = (String) msg;
+    if (message.startsWith("#login ")){
+      Boolean hasSentCommand = (Boolean) client.getInfo("hasSentCommand");
+      if (hasSentCommand==null){
+        handleLogin(message, client);
+      }
+      else {
+        try {
+          client.sendToClient("Can't login again");
+          client.close();
+        }
+        catch(IOException e){
+          serverUI.display("Failed to send to client");
+        }
+      }
+    }
+    else {
+      System.out.println("Message received from loginID: " +(String)client.getInfo("loginID")+": "+msg + " from " + client);
+      this.sendToAllClients("loginID: "+(String)client.getInfo("loginID")+": "+msg);
+    }
+  }
+
+  /**
+   * Handles login
+   * @param loginID the id
+   * @param client the client connection
+   */
+
+  private void handleLogin(String loginID, ConnectionToClient client){
+    String[] log = loginID.split(" ",2);
+    client.setInfo("loginID",log[1]);
+    client.setInfo("hasSentCommand",true);
   }
 
 
@@ -120,7 +149,7 @@ private void handleCommand(String command){
       serverUI.display("Issue disconnecting clients");
     }
   }
-  else if (command.startsWith("#setport")){
+  else if (command.startsWith("#setport ")){
     if (closed){
       String[] port = command.split(" ",2);
       setPort(Integer.parseInt(port[1]));
