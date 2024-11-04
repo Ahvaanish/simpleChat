@@ -33,7 +33,12 @@ public class EchoServer extends AbstractServer
   /**
    * Boolean variable indicating whether the server has started
    */
-  boolean started;
+  boolean started = false;
+
+  /**
+   * Boolean variable indicating whether the server is closed or not
+   */
+  boolean closed = true;
 
   //Constructors ****************************************************
   
@@ -81,8 +86,16 @@ public class EchoServer extends AbstractServer
       }
   }
 
+  /**
+   * Runs when server is closed
+   */
+  protected void serverClosed() {
+    closed = true;
+  }
 
-/**
+
+
+  /**
  * Executes a command based on the command string inputed
  * @param command to be executed
  */
@@ -90,6 +103,7 @@ private void handleCommand(String command){
   if(command.equals("#quit")) {
     try{
       close();
+      System.exit(0);
     }
     catch (IOException e){
       serverUI.display("Error while quitting");
@@ -99,22 +113,21 @@ private void handleCommand(String command){
     stopListening();
   }
   else if (command.equals("#close")){
-    stopListening();
-    Thread[] clients = getClientConnections();
-
-    for (int i = 0; i<clients.length; i++){
-      try{
-        ((ConnectionToClient)clients[i]).close();
-      }
-      catch(IOException e){
-        serverUI.display("Issue disconnecting client");
-      }
+    try{
+      close();
+    }
+    catch(IOException e){
+      serverUI.display("Issue disconnecting clients");
     }
   }
   else if (command.startsWith("#setport")){
-    // Only if server is closed, just add a boolean to check then go form there
-    String[] port = command.split(" ",2);
-    setPort(Integer.parseInt(port[1]));
+    if (closed){
+      String[] port = command.split(" ",2);
+      setPort(Integer.parseInt(port[1]));
+    }
+    else {
+      serverUI.display("Server must be closed to use this command");
+    }
   }
   else if (command.equals("#start")){ // don't know how to implement yet
     if (!started){
@@ -143,6 +156,7 @@ private void handleCommand(String command){
    */
   protected void serverStarted()
   {
+    closed = false;
     started = true;
     System.out.println
       ("Server listening for connections on port " + getPort());
