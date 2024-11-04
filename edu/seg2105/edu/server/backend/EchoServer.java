@@ -136,7 +136,6 @@ private void handleCommand(String command){
   if(command.equals("#quit")) {
     try{
       close();
-      System.out.println("here");
       System.exit(0);
     }
     catch (IOException e){
@@ -213,14 +212,7 @@ private void handleCommand(String command){
    * @param client the connection connected to the client.
    */
   protected void clientConnected(ConnectionToClient client) {
-
-    try{
-      client.sendToClient("Connected successfully"); // Do I keep this
-      System.out.println("A new client has connected to the server");
-    }
-    catch(IOException e){
-      System.out.println(e.getMessage());
-    }
+    serverUI.display("A new client has connected to the server.");
   }
 
   /**
@@ -231,12 +223,7 @@ private void handleCommand(String command){
    * @param client the connection with the client.
    */
   synchronized protected void clientDisconnected(ConnectionToClient client) {
-    try{
-      client.sendToClient("Disconnected successfully");
-    }
-    catch(IOException e){
-      System.out.println(e.getMessage());
-    }
+   serverUI.display("Client disconnected successful");
   }
 
   //Class methods ***************************************************
