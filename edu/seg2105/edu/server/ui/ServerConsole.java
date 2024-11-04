@@ -79,8 +79,7 @@ public class ServerConsole implements ChatIF {
      * This method is responsible for the creation of
      * the server instance
      *
-     * @param args[0] The host name
-     * @param args[1] The port number to listen on.  Defaults to 5555
+     * @param args[0] The port number to listen on.  Defaults to 5555
      *
      */
     public static void main(String[] args)
@@ -89,7 +88,7 @@ public class ServerConsole implements ChatIF {
 
         try
         {
-            port = Integer.parseInt(args[1]);
+            port = Integer.parseInt(args[0]);
         }
         catch(Throwable t)
         {

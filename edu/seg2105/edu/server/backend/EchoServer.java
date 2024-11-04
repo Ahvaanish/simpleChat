@@ -63,6 +63,8 @@ public class EchoServer extends AbstractServer
   public void handleMessageFromClient
     (Object msg, ConnectionToClient client)
   {
+    System.out.println("Message received: "+msg + " from " + (String)client.getInfo("loginID"));
+
     String message = (String) msg;
     if (message.startsWith("#login ")){
       Boolean hasSentCommand = (Boolean) client.getInfo("hasSentCommand");
@@ -78,11 +80,13 @@ public class EchoServer extends AbstractServer
           serverUI.display("Failed to send to client");
         }
       }
+      this.sendToAllClients((String)client.getInfo("loginID")+ " has logged on.");
+      System.out.println((String)client.getInfo("loginID")+ " has logged on.");
     }
     else {
-      System.out.println("Message received from loginID: " +(String)client.getInfo("loginID")+": "+msg + " from " + client);
-      this.sendToAllClients("loginID: "+(String)client.getInfo("loginID")+": "+msg);
+      sendToAllClients((String)client.getInfo("loginID")+"> "+msg);
     }
+
   }
 
   /**
@@ -132,6 +136,7 @@ private void handleCommand(String command){
   if(command.equals("#quit")) {
     try{
       close();
+      System.out.println("here");
       System.exit(0);
     }
     catch (IOException e){
@@ -208,8 +213,10 @@ private void handleCommand(String command){
    * @param client the connection connected to the client.
    */
   protected void clientConnected(ConnectionToClient client) {
+
     try{
-      client.sendToClient("Connected successfully");
+      client.sendToClient("Connected successfully"); // Do I keep this
+      System.out.println("A new client has connected to the server");
     }
     catch(IOException e){
       System.out.println(e.getMessage());
