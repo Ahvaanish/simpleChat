@@ -5,6 +5,7 @@ package edu.seg2105.edu.server.backend;
 
 
 import edu.seg2105.client.common.ChatIF;
+import edu.seg2105.client.ui.ClientConsole;
 import edu.seg2105.edu.server.ui.ServerConsole;
 import ocsf.server.*;
 
@@ -27,6 +28,12 @@ public class EchoServer extends AbstractServer
    * the display method in the client.
    */
   ChatIF serverUI;
+
+
+  /**
+   * Boolean variable indicating whether the server has started
+   */
+  boolean started;
 
   //Constructors ****************************************************
   
@@ -93,7 +100,16 @@ private void handleCommand(String command){
   }
   else if (command.equals("#close")){
     stopListening();
-    getClientConnections(); // how to implement this function
+    Thread[] clients = getClientConnections();
+
+    for (int i = 0; i<clients.length; i++){
+      try{
+        ((ConnectionToClient)clients[i]).close();
+      }
+      catch(IOException e){
+        serverUI.display("Issue disconnecting client");
+      }
+    }
   }
   else if (command.startsWith("#setport")){
     // Only if server is closed, just add a boolean to check then go form there
@@ -101,14 +117,17 @@ private void handleCommand(String command){
     setPort(Integer.parseInt(port[1]));
   }
   else if (command.equals("#start")){ // don't know how to implement yet
-    // if serverStopped then listen()
-    try {
-      listen();
+    if (!started){
+      try {
+        listen();
+      }
+      catch (IOException e){
+        serverUI.display("Issue listening");
+      }
     }
-    catch (IOException e){
-      serverUI.display("Issue listening");
+    else {
+      serverUI.display("Server already started");
     }
-
   }
   else if (command.equals("#getport")){
     serverUI.display(Integer.toString(getPort()));
@@ -124,6 +143,7 @@ private void handleCommand(String command){
    */
   protected void serverStarted()
   {
+    started = true;
     System.out.println
       ("Server listening for connections on port " + getPort());
   }
@@ -134,6 +154,7 @@ private void handleCommand(String command){
    */
   protected void serverStopped()
   {
+    started = false;
     System.out.println
       ("Server has stopped listening for connections.");
   }
