@@ -135,7 +135,7 @@ public class ChatClient extends AbstractClient
     else if (command.startsWith("#setport")){
 
       if (!isConnected()){
-        String[] port = command.split(" ",2);
+        String[] port = command.split(" ",2); //Maybe error check here
         setPort(Integer.parseInt(port[1]));
       }
       else {

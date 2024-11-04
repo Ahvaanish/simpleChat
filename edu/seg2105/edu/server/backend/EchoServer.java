@@ -80,6 +80,42 @@ public class EchoServer extends AbstractServer
  * @param command to be executed
  */
 private void handleCommand(String command){
+  if(command.equals("#quit")) {
+    try{
+      close();
+    }
+    catch (IOException e){
+      serverUI.display("Error while quitting");
+    }
+  }
+  else if (command.equals("#stop")){
+    stopListening();
+  }
+  else if (command.equals("#close")){
+    stopListening();
+    getClientConnections(); // how to implement this function
+  }
+  else if (command.startsWith("#setport")){
+    // Only if server is closed, just add a boolean to check then go form there
+    String[] port = command.split(" ",2);
+    setPort(Integer.parseInt(port[1]));
+  }
+  else if (command.equals("#start")){ // don't know how to implement yet
+    // if serverStopped then listen()
+    try {
+      listen();
+    }
+    catch (IOException e){
+      serverUI.display("Issue listening");
+    }
+
+  }
+  else if (command.equals("#getport")){
+    serverUI.display(Integer.toString(getPort()));
+  }
+  else {
+    serverUI.display("Not a valid command");
+  }
 }
     
   /**
