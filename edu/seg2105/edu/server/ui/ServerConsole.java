@@ -27,7 +27,7 @@ public class ServerConsole implements ChatIF {
     /**
      * The instance of the server that created this ServerConsole.
      */
-    static EchoServer server;
+    EchoServer server;
 
     /**
      * Scanner to read from the console
@@ -50,8 +50,6 @@ public class ServerConsole implements ChatIF {
     {
         System.out.println("> " + message);
     }
-
-
 
     /**
      * This method waits for input from the console.  Once it is
@@ -99,7 +97,7 @@ public class ServerConsole implements ChatIF {
 
         try
         {
-            server.listen(); //Start listening for connections
+            chat.server.listen(); //Start listening for connections
         }
         catch (Exception ex)
         {

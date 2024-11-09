@@ -223,7 +223,7 @@ private void handleCommand(String command){
    * @param client the connection with the client.
    */
   synchronized protected void clientDisconnected(ConnectionToClient client) {
-   serverUI.display("Client disconnected successful");
+   serverUI.display("A client has disconnected  from the server.");
   }
 
   //Class methods ***************************************************
